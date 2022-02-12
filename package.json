@@ -22,7 +22,8 @@
   ],
   "prettier": "@mediamonks/prettier-config",
   "dependencies": {
-    "@mediamonks/eslint-config-base": "^2.0.0-alpha.0"
+    "@mediamonks/eslint-config-base": "^2.0.0-alpha.0",
+    "gsap": "^3.9.1"
   },
   "devDependencies": {
     "@pota/cli": "^1.0.1",
