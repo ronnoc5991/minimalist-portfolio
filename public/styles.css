@@ -46,6 +46,19 @@ table {
     box-sizing: border-box;
 }
 
+:root {
+    --color-yellow: #EDAE49;
+    --color-red: #D1495B;
+    --color-seaweed: #5EB1BF;
+    --color-blue: #30638E;
+    --color-indigo: #003D5B;
+    --color-1: #d79623;
+    --color-2: #eee2b9;
+    --color-3: #f23c20;
+    --color-4: #c4cce4;
+    --color-5: #4055a1;
+}
+
 html {
     overflow: hidden;
     height: 100%;
@@ -63,38 +76,80 @@ body {
     position: relative;
 }
 
-.container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 60%;
-    height: 100%;
-    width: 1px;
-    background-color: black;
-}
+/*.container::before {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    left: 50%;*/
+/*    height: 100%;*/
+/*    width: 1px;*/
+/*    background-color: black;*/
+/*}*/
 
 .content {
     position: fixed;
     top: 50%;
-    left: 60%;
+    left: 55%;
     transform: translateY(-50%);
     font-family: 'Jost', sans-serif;
     display: flex;
-    font-size: 25vmin;
+    font-size: 10vmin;
     pointer-events: none;
 }
 
 .split-character {
     display: inline-block;
-    /*border: 1px solid red;*/
 }
 
-.name {
-    display: inline;
+.text-wrapper {
+    display: inline-flex;
+    flex-wrap: nowrap;
     white-space: nowrap;
 }
 
-/*.hand-written {*/
-/*    font-family: 'Nothing You Could Do', cursive;*/
-/*    text-decoration: underline;*/
-/*}*/
+.hand-written {
+    font-family: 'Nothing You Could Do', cursive;
+}
+
+.background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-indigo);
+    background-color: var(--color-blue);
+    background-color: var(--color-red);
+    background-color: var(--color-yellow);
+    background-color: var(--color-seaweed);
+    background-color: var(--color-1);
+    background-color: var(--color-2);
+    background-color: var(--color-3);
+    background-color: var(--color-4);
+    background-color: var(--color-5);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.top-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 50vh;
+    left: 0;
+    background-color: white;
+    pointer-events: none;
+}
+
+.bottom-mask {
+    position: fixed;
+    top: 50vh;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: white;
+    pointer-events: none;
+}

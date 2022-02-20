@@ -6,5 +6,5 @@ export function splitText(element: HTMLElement) {
         : `<span class='split-character'>${character}</span>`;
     })
     .join("");
-  return element.querySelectorAll('.split-character');
+  return [...element.getElementsByClassName('split-character')];
 }
