@@ -8,36 +8,58 @@ const text = document.getElementById('text');
 const name = document.getElementById('name');
 const role = document.getElementById('role');
 const maskedContainer = document.getElementById('masked-container');
-const maskStartPosition = document.getElementById('mask-start-position');
+const maskStartPositionMarker = document.getElementById('mask-start-position-marker');
+const linksContainer = document.getElementById('links-container');
+
 let characters: Array<Character> = [];
 let maskedContainerTimeline: gsap.core.Timeline;
+let linksContainerTimeline: gsap.core.Timeline;
 
-const getIntroductionScrollStart = () => 0;
-const getIntroductionScrollEnd = () => (name?.offsetWidth || 0) + (role?.offsetWidth || 0)
-const getIntroductionScrollDuration = () => getIntroductionScrollEnd() - getIntroductionScrollStart();
+const getIntroductionScrollStartPosition = () => 0;
+const getIntroductionScrollEndPosition = () => (name?.offsetWidth || 0) + (role?.offsetWidth || 0)
+const getIntroductionScrollDurationInPixels = () => getIntroductionScrollEndPosition() - getIntroductionScrollStartPosition();
 
-const getMaskOpenStart = () => getIntroductionScrollEnd();
-const getMaskOpenScrollDuration = () => window.innerHeight;
-const getMaskOpenEnd = () => getMaskOpenStart() + getMaskOpenScrollDuration();
+const getMaskOpenStartPosition = () => getIntroductionScrollEndPosition();
+const getMaskOpenScrollDurationInPixels = () => window.innerHeight;
+const getMaskOpenEndPosition = () => getMaskOpenStartPosition() + getMaskOpenScrollDurationInPixels();
 
-function getMaskedContentClipPath(maskStartPosition: HTMLElement, position: 'beginning' | 'end') {
-  const { top, left, width, height } = maskStartPosition.getBoundingClientRect();
+const getLinksContainerTransitionStartPosition = () => getMaskOpenEndPosition() - (linksContainer?.offsetHeight ?? 0) * 4;
+const getLinksContainerTransitionDurationInPixels = () => linksContainer?.offsetHeight ?? 0 * 4;
+const getLinksContainerTransitionEndPosition = () => getLinksContainerTransitionStartPosition() + getLinksContainerTransitionDurationInPixels();
+
+function getLinksContainerTimeline(linksContainer: HTMLElement): gsap.core.Timeline {
+  const linksTimeline = gsap.timeline({ paused: true });
+  const { children } = linksContainer;
+  linksTimeline.from(linksContainer, { yPercent: 100, duration: 1 });
+  linksTimeline.from(children, { yPercent: 50, duration: 0.5, stagger: 0.5 }, '<');
+  return linksTimeline;
+}
+
+function updateLinksContainerTimeline(scrollDistance: number) {
+  const progress = gsap.utils.normalize(getLinksContainerTransitionStartPosition(),  getLinksContainerTransitionEndPosition(), scrollDistance);
+  gsap.set(linksContainerTimeline, { progress });
+}
+
+function getMaskedContentClipPath(position: 'beginning' | 'end') {
+  if (!maskStartPositionMarker) return;
+  const { top, left, width, height } = maskStartPositionMarker.getBoundingClientRect();
   const viewportMaximum = Math.max(window.innerWidth, window.innerHeight);
   const offset = position === 'end' ? viewportMaximum * 2 : 0;
   return `inset(${top - offset}px ${window.innerWidth - (left + width) - offset}px ${window.innerHeight - (top + height) - offset}px ${left - offset}px round ${viewportMaximum}px)`;
 }
 
-function getMaskedContainerTimeline(maskedContainer: HTMLElement, beginningClipPath: string, endClipPath: string): gsap.core.Timeline {
-  return gsap.timeline({ paused: true }).fromTo(maskedContainer, { clipPath: beginningClipPath }, { clipPath: endClipPath, duration: 1, ease: 'sine.in' });
+function getMaskedContainerTimeline(): gsap.core.Timeline {
+  return gsap.timeline({ paused: true }).fromTo(maskedContainer, { clipPath: getMaskedContentClipPath('beginning') }, { clipPath: getMaskedContentClipPath('end'), duration: 1, ease: 'sine.in' });
 }
 
-function updateMaskedContainerTimelineProgress(maskedContainerTimeline: gsap.core.Timeline, scrollDistance: number) {
-  const progress = gsap.utils.normalize(getMaskOpenStart(),  getMaskOpenEnd(), scrollDistance);
+function updateMaskedContainerTimelineProgress(scrollDistance: number) {
+  const progress = gsap.utils.normalize(getMaskOpenStartPosition(),  getMaskOpenEndPosition(), scrollDistance);
   gsap.set(maskedContainerTimeline, { progress });
 }
 
-function setScrollContainerHeight(scrollContainer: HTMLElement, name: HTMLElement, role: HTMLElement) {
-  scrollContainer.style.height = `${window.innerHeight + getIntroductionScrollDuration() + getMaskOpenScrollDuration()}px`;
+function setScrollContainerHeight() {
+  if (!scrollContainer) return;
+  scrollContainer.style.height = `${window.innerHeight + getIntroductionScrollDurationInPixels() + getMaskOpenScrollDurationInPixels()}px`;
 }
 
 function getCharacterTimeline(element: Element): gsap.core.Timeline {
@@ -67,7 +89,8 @@ if (text) {
 document.body.addEventListener('scroll', () => {
   const scrollDistance = document.body.scrollTop;
   characters.forEach((character) => updateCharacterTimelineProgress(character, scrollDistance))
-  updateMaskedContainerTimelineProgress(maskedContainerTimeline, scrollDistance);
+  updateMaskedContainerTimelineProgress(scrollDistance);
+  updateLinksContainerTimeline(scrollDistance);
 })
 
 let timeoutId: NodeJS.Timeout | null = null;
@@ -76,10 +99,9 @@ window.addEventListener('resize', () => {
   if (timeoutId) clearTimeout(timeoutId);
   timeoutId = setTimeout(() => {
     document.body.scrollTop = 0;
-    if (scrollContainer && name && role) setScrollContainerHeight(scrollContainer, name, role);
-    if (maskedContainer && maskStartPosition) {
-      maskedContainerTimeline = getMaskedContainerTimeline(maskedContainer, getMaskedContentClipPath(maskStartPosition, 'beginning'), getMaskedContentClipPath(maskStartPosition, 'end'));
-    }
+    setScrollContainerHeight();
+    maskedContainerTimeline = getMaskedContainerTimeline();
+    if (linksContainer) linksContainerTimeline = getLinksContainerTimeline(linksContainer);
     characters.forEach((character) => {
       const { left, width } = character.element.getBoundingClientRect();
       character.left = left;
@@ -90,11 +112,9 @@ window.addEventListener('resize', () => {
   }, 300)
 });
 
-if (scrollContainer && name && role) setScrollContainerHeight(scrollContainer, name, role);
+setScrollContainerHeight();
 
-if (maskedContainer && maskStartPosition) {
-  maskedContainerTimeline = getMaskedContainerTimeline(maskedContainer, getMaskedContentClipPath(maskStartPosition, 'beginning'), getMaskedContentClipPath(maskStartPosition, 'end'));
-
-}
+maskedContainerTimeline = getMaskedContainerTimeline();
+if (linksContainer) linksContainerTimeline = getLinksContainerTimeline(linksContainer);
 
 export {};

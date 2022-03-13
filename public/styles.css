@@ -57,6 +57,9 @@ table {
     --color-3: #f23c20;
     --color-4: #c4cce4;
     --color-5: #4055a1;
+
+    --masked-content-background-color: var(--color-1);
+    --masked-content-foreground-color: var(--color-2);
 }
 
 html {
@@ -68,10 +71,6 @@ body {
     margin: 0;
     height: 100%;
     overflow: auto;
-}
-
-.scroll-container {
-
 }
 
 .text-container {
@@ -89,8 +88,8 @@ body {
 }
 
 .masked-container {
-    background-color: var(--color-1);
-    color: var(--color-2);
+    background-color: var(--masked-content-background-color);
+    color: var(--masked-content-foreground-color);
     clip-path: circle(0% at 0% 0%);
 }
 
@@ -122,7 +121,6 @@ body {
 }
 
 .mask-start-position {
-    content: '';
     position: absolute;
     border-radius: 50%;
     top: 62%;
@@ -131,10 +129,14 @@ body {
 }
 
 .links-container {
+    color: var(--masked-content-foreground-color);
     position: absolute;
     top: 100%;
     left: 50%;
     transform: translate(-50%, -100%);
+    padding: 50px 0;
+    display: flex;
+    gap: 20px;
 }
 
 .link {
