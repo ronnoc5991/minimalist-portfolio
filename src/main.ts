@@ -23,15 +23,15 @@ const getMaskOpenStartPosition = () => getIntroductionScrollEndPosition();
 const getMaskOpenScrollDurationInPixels = () => window.innerHeight;
 const getMaskOpenEndPosition = () => getMaskOpenStartPosition() + getMaskOpenScrollDurationInPixels();
 
-const getLinksContainerTransitionStartPosition = () => getMaskOpenEndPosition() - (linksContainer?.offsetHeight ?? 0) * 4;
-const getLinksContainerTransitionDurationInPixels = () => linksContainer?.offsetHeight ?? 0 * 4;
+const getLinksContainerTransitionStartPosition = () => getMaskOpenEndPosition() - (linksContainer?.offsetHeight ?? 0) * 3;
+const getLinksContainerTransitionDurationInPixels = () => linksContainer?.offsetHeight ?? 0 * 3;
 const getLinksContainerTransitionEndPosition = () => getLinksContainerTransitionStartPosition() + getLinksContainerTransitionDurationInPixels();
 
 function getLinksContainerTimeline(linksContainer: HTMLElement): gsap.core.Timeline {
   const linksTimeline = gsap.timeline({ paused: true });
   const { children } = linksContainer;
   linksTimeline.from(linksContainer, { yPercent: 100, duration: 1 });
-  linksTimeline.from(children, { yPercent: 50, duration: 0.5, stagger: 0.5 }, '<');
+  linksTimeline.from(children, { yPercent: 100, duration: 0.5, stagger: 0.5 }, '<');
   return linksTimeline;
 }
 
