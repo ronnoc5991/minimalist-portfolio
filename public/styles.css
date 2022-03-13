@@ -89,8 +89,9 @@ body {
 }
 
 .masked-container {
-    background-color: var(--color-3);
-    clip-path: circle(0% 0% at 0% 0%);
+    background-color: var(--color-1);
+    color: var(--color-2);
+    clip-path: circle(0% at 0% 0%);
 }
 
 .split-character {
@@ -101,10 +102,6 @@ body {
     display: flex;
     flex-direction: column;
     width: 100vmin;
-}
-
-.masked-text {
-    color: var(--color-2);
 }
 
 .hand-written {
@@ -131,4 +128,31 @@ body {
     top: 62%;
     left: 47%;
     transform: translate(-50%, -50%);
+}
+
+.links-container {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+}
+
+.link {
+    display: inline-block;
+    position: relative;
+    height: 50px;
+    width: 50px;
+}
+
+.link:visited {
+    color: inherit;
+}
+
+.link svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
 }
